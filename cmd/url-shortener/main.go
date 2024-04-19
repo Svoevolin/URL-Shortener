@@ -1,9 +1,13 @@
 package main
 
 import (
-	"golang.org/x/exp/slog"
 	"os"
-	"url-shortener/internal/config"
+
+	"github.com/Svoevolin/url-shortener/internal/config"
+	"github.com/Svoevolin/url-shortener/internal/database/postgres"
+	"github.com/Svoevolin/url-shortener/internal/database/postgres/models"
+	"github.com/Svoevolin/url-shortener/internal/lib/logger/sl"
+	"golang.org/x/exp/slog"
 )
 
 const (
@@ -17,10 +21,16 @@ func main() {
 
 	log := setupLogger(cfg.Env)
 
-	log.Info("starting url-shortener", slog.String("env", cfg.Env))
-	log.Debug("debug logger are enabled")
+	// TO DO: init database: postgresql
 
-	// TO DO: init storage: sqlite
+	db, err := postgres.New(cfg.Dsn)
+	if err != nil {
+		log.Error("failed to init storage", sl.Err(err))
+		os.Exit(1)
+	}
+
+	urlDB := models.NewUrlDB(db)
+	_ = urlDB
 
 	// TO DO: init router: chi, "chi render"
 
