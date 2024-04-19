@@ -7,6 +7,7 @@ import (
 	"github.com/Svoevolin/url-shortener/internal/config"
 	"github.com/Svoevolin/url-shortener/internal/database/postgres"
 	"github.com/Svoevolin/url-shortener/internal/database/postgres/models"
+	"github.com/Svoevolin/url-shortener/internal/http-server/handlers/url/redirect"
 	"github.com/Svoevolin/url-shortener/internal/http-server/handlers/url/save"
 	mwLogger "github.com/Svoevolin/url-shortener/internal/http-server/middleware/logger"
 	"github.com/Svoevolin/url-shortener/internal/lib/logger/handlers/slogpretty"
@@ -32,6 +33,9 @@ func main() {
 
 	log := setupLogger(cfg.Env)
 
+	log.Info("starting url-shortener", slog.String("env", cfg.Env), slog.String("version", "123"))
+	log.Debug("debug messages are enabled")
+
 	// DATABASE
 
 	db, err := postgres.New(cfg.Dsn)
@@ -41,7 +45,6 @@ func main() {
 	}
 
 	urlDB := models.NewUrlDB(db)
-	_ = urlDB
 
 	// ROUTER
 
@@ -52,7 +55,15 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 
-	router.Post("/url", save.New(log, urlDB))
+	router.Route("/url", func(r chi.Router) {
+		r.Use(middleware.BasicAuth("url-shortener", map[string]string{
+			cfg.HTTPServer.User: cfg.HTTPServer.Password,
+		}))
+
+		r.Post("/", save.New(log, urlDB))
+	})
+
+	router.Get("/{alias}", redirect.New(log, urlDB))
 
 	log.Info("starting server", slog.String("address", cfg.Address))
 

@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNew(t *testing.T) {
+func TestSaveHandler(t *testing.T) {
 	tests := []struct {
 		name      string
 		alias     string
