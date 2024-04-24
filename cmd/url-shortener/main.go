@@ -7,8 +7,10 @@ import (
 	"github.com/Svoevolin/url-shortener/internal/config"
 	"github.com/Svoevolin/url-shortener/internal/database/postgres"
 	"github.com/Svoevolin/url-shortener/internal/database/postgres/models"
+	"github.com/Svoevolin/url-shortener/internal/http-server/handlers/url/delete"
 	"github.com/Svoevolin/url-shortener/internal/http-server/handlers/url/redirect"
 	"github.com/Svoevolin/url-shortener/internal/http-server/handlers/url/save"
+	"github.com/Svoevolin/url-shortener/internal/http-server/handlers/url/update"
 	mwLogger "github.com/Svoevolin/url-shortener/internal/http-server/middleware/logger"
 	"github.com/Svoevolin/url-shortener/internal/lib/logger/handlers/slogpretty"
 	"github.com/Svoevolin/url-shortener/internal/lib/logger/sl"
@@ -33,6 +35,7 @@ func main() {
 
 	log := setupLogger(cfg.Env)
 
+	log = log.With(slog.String("env", cfg.Env))
 	log.Info("starting url-shortener", slog.String("env", cfg.Env), slog.String("version", "123"))
 	log.Debug("debug messages are enabled")
 
@@ -61,6 +64,8 @@ func main() {
 		}))
 
 		r.Post("/", save.New(log, urlDB))
+		r.Put("/", update.New(log, urlDB))
+		r.Delete("/{alias}", delete.New(log, urlDB))
 	})
 
 	router.Get("/{alias}", redirect.New(log, urlDB))

@@ -69,6 +69,51 @@ func (db *UrlDB) GetURL(alias string) (string, error) {
 	return url, nil
 }
 
+func (db *UrlDB) UpdateURL(url string, newAlias string) (int64, error) {
+	const op = "database.postgres.models.UpdateURL"
+
+	stmt, err := db.db.Prepare("UPDATE url SET alias = $1 WHERE url = $2 RETURNING id")
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	var id int64
+	err = stmt.QueryRow(newAlias, url).Scan(&id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, database.ErrURLNotFound
+		}
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return id, nil
+}
+
+func (db *UrlDB) DeleteURL(alias string) error {
+	const op = "database.postgres.models.DeleteURL"
+
+	stmt, err := db.db.Prepare("DELETE FROM url WHERE alias = $1")
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	res, err := stmt.Exec(alias)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	if rowsAffected == 0 {
+		return database.ErrURLNotFound
+	}
+
+	return nil
+}
+
 func IsErrorCode(err error, errorCode pq.ErrorCode) bool {
 	var pgErr *pq.Error
 	if errors.As(err, &pgErr) {
