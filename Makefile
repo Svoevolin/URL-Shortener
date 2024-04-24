@@ -4,8 +4,9 @@ GOVER=$(shell go version | perl -nle '/(go\d\S+)/; print $$1;')
 SMARTIMPORTS=${BINDIR}/smartimports_${GOVER}
 LINTVER=v1.52.0
 LINTBIN=${BINDIR}/lint_${GOVER}_${LINTVER}
-GOOSEBIN := ${BINDIR}/goose
-DSN := "host=localhost port=5432 user=postgres password=postgres dbname=url sslmode=disable"
+GOOSEBIN=${BINDIR}/goose
+DSN="host=localhost port=5432 user=postgres password=postgres dbname=url sslmode=disable"
+CONFIG_PATH=${CURDIR}/config/local.yaml
 PACKAGE=github.com/Svoevolin/url-shortener/cmd/url-shortener
 
 all: format build test lint
@@ -20,7 +21,7 @@ functional-test:
 	go test ./... -tags 'functional'
 
 run:
-	CONFIG_PATH=./config/local.yaml go run ${PACKAGE}
+	CONFIG_PATH=${CONFIG_PATH} go run ${PACKAGE}
 
 lint: install-lint
 	${LINTBIN} run
