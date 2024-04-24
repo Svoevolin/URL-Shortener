@@ -63,8 +63,8 @@ func main() {
 			cfg.HTTPServer.User: cfg.HTTPServer.Password,
 		}))
 
-		r.Post("/", save.New(log, urlDB))
-		r.Put("/", update.New(log, urlDB))
+		r.Post("/", save.New(log, urlDB, cfg.AliasLength))
+		r.Put("/", update.New(log, urlDB, cfg.AliasLength))
 		r.Delete("/{alias}", delete.New(log, urlDB))
 	})
 

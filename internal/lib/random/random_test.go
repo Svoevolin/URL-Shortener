@@ -9,7 +9,7 @@ import (
 func TestNewRandomStrings(t *testing.T) {
 	tests := []struct {
 		name string
-		size int
+		size int8
 	}{
 		{
 			name: "size = 1",
@@ -31,18 +31,14 @@ func TestNewRandomStrings(t *testing.T) {
 			name: "size = 100",
 			size: 100,
 		},
-		{
-			name: "size = 500",
-			size: 500,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			str1 := NewRandomStrings(tt.size)
 			str2 := NewRandomStrings(tt.size)
 
-			assert.Len(t, str1, tt.size)
-			assert.Len(t, str2, tt.size)
+			assert.Len(t, str1, int(tt.size))
+			assert.Len(t, str2, int(tt.size))
 
 			assert.NotEqual(t, t, str1, str2)
 		})

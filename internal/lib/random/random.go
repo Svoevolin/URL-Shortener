@@ -7,7 +7,7 @@ import (
 )
 
 // NewRandomStrings generates random string with given size
-func NewRandomStrings(size int) string {
+func NewRandomStrings(size int8) string {
 	rnd := rand.New(rand.NewSource(uint64(time.Now().UnixNano())))
 
 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz" + "0123456789")

@@ -79,7 +79,7 @@ func TestUpdateHandler(t *testing.T) {
 					Return(int64(1), tc.mockError).Once()
 			}
 
-			handler := New(slogdiscard.NewDiscardLogger(), urlUpdaterMock)
+			handler := New(slogdiscard.NewDiscardLogger(), urlUpdaterMock, 10)
 
 			input := fmt.Sprintf(`{"url": "%s", "alias": "%s"}`, tc.url, tc.alias)
 
