@@ -4,6 +4,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/Svoevolin/url-shortener/internal/database"
 	"github.com/Svoevolin/url-shortener/internal/http-server/handlers/url/redirect/mocks"
 	"github.com/Svoevolin/url-shortener/internal/lib/api"
 	"github.com/Svoevolin/url-shortener/internal/lib/logger/handlers/slogdiscard"
@@ -25,6 +26,13 @@ func TestRedirectHandler(t *testing.T) {
 			alias: "test_alias",
 			url:   "https://www.google.com/",
 		},
+		{
+			name:      "We have no this alias",
+			alias:     "non-existent",
+			url:       "",
+			respError: "api.GetRedirect: invalid status code: 200",
+			mockError: database.ErrURLNotFound,
+		},
 	}
 	for _, tc := range tests {
 		tc := tc
@@ -44,7 +52,9 @@ func TestRedirectHandler(t *testing.T) {
 			defer ts.Close()
 
 			redirectedToUrl, err := api.GetRedirect(ts.URL + "/" + tc.alias)
-			require.NoError(t, err)
+			if err != nil {
+				require.Equal(t, tc.respError, err.Error())
+			}
 
 			// Check the final URL after redirection
 			assert.Equal(t, tc.url, redirectedToUrl)

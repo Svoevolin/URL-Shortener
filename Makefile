@@ -17,7 +17,7 @@ test:
 	go test ./...
 
 run:
-	go run ${PACKAGE}
+	CONFIG_PATH=./config/local.yaml go run ${PACKAGE}
 
 lint: install-lint
 	${LINTBIN} run
