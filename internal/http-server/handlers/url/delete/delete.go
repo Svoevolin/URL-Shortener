@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/Svoevolin/url-shortener/internal/database"
-	resp "github.com/Svoevolin/url-shortener/internal/lib/api/response"
 	"github.com/Svoevolin/url-shortener/internal/lib/logger/sl"
+	resp "github.com/Svoevolin/url-shortener/internal/lib/response"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
