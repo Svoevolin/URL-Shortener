@@ -14,7 +14,10 @@ build: bindir
 	go build -o ${BINDIR}/bot ${PACKAGE}
 
 test:
-	go test ./...
+	go test ./... -tags '!functional'
+
+functional-test:
+	go test ./... -tags 'functional'
 
 run:
 	CONFIG_PATH=./config/local.yaml go run ${PACKAGE}

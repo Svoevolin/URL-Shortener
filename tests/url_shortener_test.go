@@ -1,16 +1,19 @@
+//go:build functional
+
 package tests
 
 import (
 	"fmt"
+	"net/http"
+	"net/url"
+	"testing"
+
 	"github.com/Svoevolin/url-shortener/internal/http-server/handlers/url/save"
 	"github.com/Svoevolin/url-shortener/internal/lib/api"
 	"github.com/Svoevolin/url-shortener/internal/lib/random"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gavv/httpexpect/v2"
 	"github.com/stretchr/testify/require"
-	"net/http"
-	"net/url"
-	"testing"
 )
 
 const host = "localhost:8080"
